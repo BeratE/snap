@@ -1,0 +1,51 @@
+# General Config
+TARGET 		:= snap
+
+MEMORY_MAP	:= src/memmap.cfg
+
+SRC_DIR		:= src
+RES_DIR		:= res
+OBJ_DIR		:= obj
+BIN_DIR 	:= bin
+
+CC		:= ca65		# Assembler/Compiler
+LD		:= ld65		# Linker
+PLATFORM	:= 65816	# Target CPU
+LFLAGS		:= -v
+CFLAGS		:= -v
+
+# No need to edit below this line
+# --------------------------------------------------------------------------
+# Fetch list of source and object file names
+SOURCES	:= $(shell find $(SRC_DIR) -type f -name *.s)
+OBJECTS	:= $(patsubst $(SRC_DIR)/%,$(OBJ_DIR)/%,$(SOURCES:.s=.o))
+
+.PHONY: all clean cleanall rebuild resources images directories
+
+all: resources $(TARGET)
+
+clean:
+	@rm -rf $(OBJ_DIR)
+
+cleanall: clean
+	@rm -rf $(BIN_DIR)
+
+rebuild: cleanall all
+
+resources: directories images
+	@echo > Building Resource Files
+	png2snes --bitplanes 4 --tilesize 8 --binary --verbose --output=sprites $(RES_DIR)/*.png
+	@mv sprites.* $(BIN_DIR)/ 
+
+directories:
+	@mkdir -p $(OBJ_DIR)
+	@mkdir -p $(BIN_DIR)
+
+# Real build targets
+$(TARGET): $(OBJECTS)
+	@echo > Linking Target $@
+	$(LD) $(LFLAGS) -C $(MEMORY_MAP) $^ -o $(BIN_DIR)/$@.smc
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
+	@echo > Assembling $< ..
+	$(CC) $(CFLAGS) --cpu $(PLATFORM) -o $@ $<
