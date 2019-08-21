@@ -1,11 +1,10 @@
-;----- Assembler directives -------------------------------------------------------  
+;;;----- Assembler directives -------------------------------------------------------  
 .p816 	; 65816 processor
 .i16    ; X/Y are 16 bits
 .a8     ; A is 8 bits
-;----------------------------------------------------------------------------------
+;;;----------------------------------------------------------------------------------
 	
-;----- ROM Header -----------------------------------------------------------------
-; At the End of Bank 0, $40 Bytes of cartridge Information.	
+;;;----- ROM Header -----------------------------------------------------------------
 .segment "HEADER"        	; +$7FC0 in file
 	.byte ROM_NAME		; ROM Title
 
@@ -14,21 +13,28 @@
 	.byte 0         ; ROM Type   - No battery RAM
 	.byte $07       ; ROM Size   - 128K ROM
 	.byte 0		; SRAM Size
-	.byte 0,0	; Creator License ID Code
+	.byte 0		; Creator License ID Code
+	.byte $33
 	.byte 0		; Version Number   
-	.word $AAAA	; Checksum Complement
-	.word $5555    	; Checksum
-;---------------------------------------------------------------------------------- 
+	.word $0000	; Checksum Complement
+	.word $0000    	; Checksum
+;;;---------------------------------------------------------------------------------- 
 
-;----- Vector Table ---------------------------------------------------------------
+;;;----- Interrupt and Reset vectors for the 65816 CPU ------------------------------
 .segment "VECTORS"
-	.word 0, 0, 0, 0, 0, 0, 0, 0
-	.word 0, 0, 0, 0, 0, 0, reset, 0
-;---------------------------------------------------------------------------------- 
-
-.macro	init_cpu
-	clc             ; native mode
-	xce
-	rep #$10        ; X/Y 16-bit
-	sep #$20        ; A 8-bit
-.endmacro
+;;; Native mode  
+.addr 	$0000		; COP Co-process enable
+.addr	$0000		; BRK	
+.addr	$0000		; ABORT
+.addr	$0000		; NMI
+.addr	$0000		; RESET
+.addr	$0000		; IRW
+.word   $0000, $0000    ; Unused
+;;;Emulation Mode
+.addr 	$0000		; COP Co-process enable
+.word 	$0000		; Unused
+.addr	$0000		; ABORT	
+.addr	NMIHandler	; NMI
+.addr	ResetHandler	; RESET
+.addr	$0000		; BRK/IRQ
+;;;----------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 TARGET 		:= snap
 
 MEMORY_MAP	:= src/memmap.cfg
+LOG_FILE	:= ass.log
 
 # Directory structure
 SRC_DIR		:= src
@@ -11,24 +12,27 @@ BIN_DIR 	:= bin
 
 # File types
 IMG_SFX		:= png		# Image resource type
-TGT_SFX		:= smc		# Target 
+TGT_SFX		:= sfc		# Target 
 
 # Assembler/Linker configs
-CC		:= ca65		# Assembler/Compiler
-LD		:= ld65		# Linker
+AS65		:= ca65		# Assembler/Compiler
+LD65		:= ld65		# Linker
 PLATFORM	:= 65816	# Target CPU
-LFLAGS		:= -v
-CFLAGS		:= -v
+LFLAGS		:= 
+AFLAGS		:= -v -v -v
 
 # --------------------------------------------------------------------------
 SOURCE_FILES	:= $(shell find $(SRC_DIR) -type f -name *.s)
 OBJECT_FILES	:= $(patsubst $(SRC_DIR)/%, $(OBJ_DIR)/%, $(SOURCE_FILES:.s=.o))
-
+INCLUDE_FILES	:= $(shell find $(RES_DIR) -type f -name *.inc)
 IMAGE_FILES	:= $(shell find $(RES_DIR) -type f -name *.$(IMG_SFX))
 
 .PHONY: all clean cleanall rebuild resources directories
 
 all: resources $(TARGET)
+
+test: all
+	@bsnes-compatibility $(BIN_DIR)/$(TARGET).$(TGT_SFX) 
 
 clean:
 	@rm -rf $(OBJ_DIR)
@@ -39,10 +43,10 @@ cleanall: clean
 rebuild: cleanall all
 
 resources: directories
-	@echo Building Resource Files ..
-	$(foreach img, $(IMAGE_FILES), \
-		png2snes --bitplanes 4 --tilesize 8 --binary --verbose \
-			  --output=$(notdir $(basename $(img))) $(img)) 
+	@echo **Building Resource Files ..
+	$(foreach img, $(IMAGE_FILES), @png2snes --bitplanes 4		\
+	--tilesize 8 --binary --output=$(notdir $(basename $(img)))	\
+	$(img))
 	@mv *.cgr *.vra src/
 
 directories:
@@ -50,10 +54,10 @@ directories:
 	@mkdir -p $(BIN_DIR)
 
 # Real build targets
-$(TARGET): $(OBJECT_FILES)
-	@echo Linking Target $@ ..
-	$(LD) $(LFLAGS) -C $(MEMORY_MAP) $^ -o $(BIN_DIR)/$@.$(TGT_SFX)
+$(TARGET): $(OBJECT_FILES) $(INCLUDE_FILES)
+	@echo **Linking Target $@ ..
+	@$(LD65) $(LFLAGS) -C $(MEMORY_MAP) $^ -o $(BIN_DIR)/$@.$(TGT_SFX)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
-	@echo  Assembling $< ..
-	$(CC) $(CFLAGS) --cpu $(PLATFORM) -o $@ $<
+	@echo  **Assembling $< ..
+	@$(AS65) $(AFLAGS) --cpu $(PLATFORM) -o $@ $< > $(LOG_FILE)
