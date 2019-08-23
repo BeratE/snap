@@ -7,7 +7,6 @@
 
 ;;; Initialize Registers
 .macro	init_cpu
- 	sei			;Disable Interrupts
 	clc			; Switch to Native Mode
 	xce		
 	rep #$10        	; X/Y 16-bit
@@ -36,7 +35,7 @@
 	sty VMADDL
 	lda #$18		; Destination VRAM Data Low in..
 	sta BBAD0		; DMA Destination
-	lda #$00		; Source adress bank
+	lda #^src_addr; Source adress bank
 	sta A1B0
  	ldy #src_addr		; From source address in..
  	sty A1T0L	
@@ -44,24 +43,21 @@
 	sty DAS0L		; Transfer size
 	lda #$01		; To PPU, Increment, Word write once..
 	sta DMAP0		; DMA Control
-	lda #$01
 	sta MDMAEN		; Start rollin'
 .endmacro	
 
 ;;; Load Data into CGRAM
 .macro load_cgrm src_addr, dst_addr, size
-	lda #$00
+	lda #^src_addr
 	sta A1B0		; Source bank..
 	ldy #src_addr		; Source in..
 	sty A1T0L
 	ldy size		; Transfer size..
 	sty DAS0L
-
 	lda #dst_addr
-	sta CGDATA
+	sta CGADD
 	lda #$22		; Transfer destination..
 	sta BBAD0 		; to CGDATA
-	
 	stz DMAP0		; Byte increment
 	lda #$01
 	sta MDMAEN		; Start rolin'

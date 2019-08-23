@@ -4,26 +4,25 @@
 .include "libmacro.inc"
 	
 .segment "RODATA"
-vra_bin: .incbin "main.vra" 	; Size $1a00
 cgr_bin: .incbin "main.cgr"	; Size $0020
+vra_bin: .incbin "main.vra" 	; Size $1a00
 
 ;;;----- Game ------------------------------------------------------------------
 .segment "CODE"
 ResetHandler:
+	sei			; Disable Interrupts	
 	init_cpu
  	clear_ppu
-
-	lda #$E0
-	sta CGDATA
-	lda #$03
-	sta CGDATA
 
  	load_vram vra_bin, $0000, #$1a00
  	load_cgrm cgr_bin, $80,   #$0020
 
         lda #$0f		; Release forced blanking
         sta INIDISP	
+	lda #$81
+	sta NMITIMEN
 
+	
 GameLoop:
 	jmp GameLoop
 ;;;-----------------------------------------------------------------------------

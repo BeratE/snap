@@ -26,15 +26,15 @@
 .addr 	$0000		; COP Co-process enable
 .addr	$0000		; BRK	
 .addr	$0000		; ABORT
-.addr	$0000		; NMI
+.addr	NMIHandler	; NMI
 .addr	$0000		; RESET
-.addr	$0000		; IRW
+.addr	IRQHandler	; IRQ
 .word   $0000, $0000    ; Unused
 ;;;Emulation Mode
 .addr 	$0000		; COP Co-process enable
 .word 	$0000		; Unused
 .addr	$0000		; ABORT	
-.addr	NMIHandler	; NMI
+.addr	$0000		; NMI
 .addr	ResetHandler	; RESET
 .addr	$0000		; BRK/IRQ
 ;;;----------------------------------------------------------------------------------
