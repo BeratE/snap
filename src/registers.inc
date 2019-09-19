@@ -1,9 +1,11 @@
 ;;; Memory Mapped Input/Output Registers
-
+.ifndef REGISTERS_H
+.define REGISTERS_H	
+.p816
+	
 ;;;----- Address Bus B Registers -------------------------
 ;;;-------------------------------------------------------
 INIDISP     = $2100     ; Screen Display
-BGMODE	    = $2105	; BG Mode and Character Size
 
 ;;;----- OAM Registers ------------------------------------
 OBJSEL      = $2101     ; Object Size and Character Size 
@@ -12,6 +14,25 @@ OAMADDH     = $2103	; OAM Address High
 OAMDATA     = $2104     ; OAM Data Write
 ;;;--------------------------------------------------------
 
+;;;----- BG Registers -------------------------------------
+BGMODE	    = $2105	; BG Mode and Character Size
+MOSAIC	    = $2106	; Mosaic Register
+BG1SC	    = $2107	; BG 1 Tilemap Address and Size
+BG2SC	    = $2108	; BG 2 Tilemap Address and Size
+BG3SC	    = $2109	; BG 3 Tilemap Address and Size
+BG4SC	    = $210a	; BG 4 Tilemap Address and Size
+BG12NBA     = $210b	; BG 1, 2 CHR Address 
+BG34NBA     = $210c	; BG 3, 4 CHR Address
+BG1HOFS	    = $210d	; BG1 Horizontal Scroll Registers
+BG1VOFS	    = $210e 	; BG1 Vertical Scroll Register
+BG2HOFS	    = $210f	; BG2 Horizontal Scroll Registers
+BG2VOFS	    = $2110 	; BG2 Vertical Scroll Register
+BG3HOFS	    = $2111	; BG3 Horizontal Scroll Registers
+BG3VOFS	    = $2112 	; BG3 Vertical Scroll Register
+BG4HOFS	    = $2113	; BG4 Horizontal Scroll Registers
+BG4VOFS	    = $2114 	; BG4 Vertical Scroll Register
+;;;--------------------------------------------------------
+	
 ;;;----- VRAM Registers -----------------------------------
 VMAIN       = $2115     ; Video Port Control
 VMADDL      = $2116     ; VRAM Address Low
@@ -25,8 +46,8 @@ CGADD       = $2121     ; CGRAM Address
 CGDATA      = $2122     ; CGRAM DATA WRITE
 ;;;--------------------------------------------------------
 
-TM          = $212c     ; Screen Destination
-TS	    = $212d	; Screen Destination
+TM          = $212c     ; Main Screen Destination
+TS	    = $212d	; Sub Screen Destination
 
 ;;;----- Internal CPU Registers ---------------------------
 ;;;--------------------------------------------------------
@@ -45,6 +66,4 @@ DAS0L       = $4305 	; DMA Transfer Size Low
 DAS0H       = $4306 	; DMA Transfer Size High 	 	
 MDMAEN      = $420b     ; DMA Enable Register
 ;;;--------------------------------------------------------
-
-
-
+.endif

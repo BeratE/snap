@@ -1,8 +1,6 @@
 # General Config
 TARGET 		:= snap
-
-MEMORY_MAP	:= src/memmap.cfg
-LOG_FILE	:= ass.log
+VERSION		:= 0.1
 
 # Directory structure
 SRC_DIR		:= src
@@ -18,8 +16,10 @@ TGT_SFX		:= sfc		# Target
 PLATFORM	:= 65816	# Target CPU
 AS65		:= ca65		# Assembler/Compiler
 LD65		:= ld65		# Linker
-LFLAGS		:= -C $(MEMORY_MAP)
+LFLAGS		:= -C memmap.cfg
 AFLAGS		:= -v -v --cpu $(PLATFORM)
+
+EMU		:= bsnes-compatibility
 
 # --------------------------------------------------------------------------------
 SOURCE_FILES	:= $(shell find $(SRC_DIR) -type f -name *.s)
@@ -32,7 +32,7 @@ IMAGE_FILES	:= $(shell find $(RES_DIR) -type f -name *.$(IMG_SFX))
 all: $(TARGET)
 
 test: all
-	@bsnes-compatibility $(BIN_DIR)/$(TARGET).$(TGT_SFX) 
+	@$(EMU) $(BIN_DIR)/$(TARGET).$(TGT_SFX) 
 
 clean:
 	@rm -rf $(OBJ_DIR)
@@ -61,4 +61,4 @@ $(TARGET): $(OBJECT_FILES) $(INCLUDE_FILES)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.s
 	@echo  **Assembling $< ..
-	@$(AS65) $(AFLAGS) $< -o $@ > $(LOG_FILE)
+	@$(AS65) $(AFLAGS) $< -o $@ > output.log

@@ -1,5 +1,5 @@
-# SNAP
-ToDO: Think of some cool name. Preferably something badly translated like Crimson Noir.. or Crystal of Mana. 
+# Dungeon Scroll
+Some sort of Roguelike for the Super Nintendo Entertainment System.
 
 ## Tools and Libraries 
 * CA65, LD65
