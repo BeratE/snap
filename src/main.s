@@ -1,4 +1,4 @@
-.define ROM_NAME "Crimson Noir"
+.define ROM_NAME "Dungeon Scroll"
 .include "header.inc"
 .include "registers.inc"
 .include "libmacro.inc"
