@@ -1,4 +1,0 @@
-(defun my-square (x)
-  (* x x))
-
-(my-square 4)
